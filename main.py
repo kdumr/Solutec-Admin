@@ -14,6 +14,7 @@ from tkinter import messagebox
 from conection import *
 from editarcpe import *
 
+
 from api import urlLicense, urlInfoLicense, urlCreate, urlInfo, usuario, senha, endpoint
 
 
@@ -25,9 +26,9 @@ icone = "icone.ico"
 titulo = f"Solutec Admin - Versão: {version}"
 
 # URL do arquivo a ser baixado
-urlDownload = 'https://raw.githubusercontent.com/kdumr/Formatador-de-Mac-V2/main/macsetup.exe'
+urlDownload = 'https://raw.githubusercontent.com/kdumr/Solutec-Admin/main/macsetup.exe'
 
-urlConfig = 'https://raw.githubusercontent.com/kdumr/Formatador-de-Mac-V2/main/config.json'
+urlConfig = 'https://raw.githubusercontent.com/kdumr/Solutec-Admin/main/config.json'
 
 class Main:
     def main():
