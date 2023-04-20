@@ -554,7 +554,7 @@ def editarCPE(lista, usuario, senha):
                     firmwareInstalado = responseLicenseStatus.json().get("release")
                     if firmwareInstalado != firmwareRequestsConfig and firmwareInstalado != "0086-gik":
                         if responseLicenseStatus.json().get("use_tr069") == False:
-                            botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i, responseLicenseStatus.json().get("release")))
+                            botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
                             botaoAtualizarFirmware.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
                     
                 elif status == False:
@@ -612,7 +612,7 @@ def editarCPE(lista, usuario, senha):
                         firmwareInstalado = responseLicenseStatus.json().get("release")
                         if firmwareInstalado != firmwareRequestsConfig and firmwareInstalado != "0086-gik":
                             if responseLicenseStatus.json().get("use_tr069") == False:
-                                botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i, responseLicenseStatus.json().get("release")))
+                                botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
                                 botaoAtualizarFirmware.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
                         
                     elif status == False:
