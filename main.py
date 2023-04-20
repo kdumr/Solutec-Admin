@@ -18,7 +18,6 @@ from editarcpe import *
 from api import urlLicense, urlInfoLicense, urlCreate, urlInfo, usuario, senha, endpoint
 
 
-
 with open('config.json', 'r') as arquivo:
     config = json.load(arquivo)
 version = config['version']

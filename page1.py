@@ -1,21 +1,29 @@
 import tkinter as tk
 
-def esconder_botao():
-    # Função para esconder o botão quando o botão 'Esconder' é clicado
-    botao2.grid_remove()
+def show_loading_frame():
+    loading_frame = tk.Frame(root, bg="red")
+    loading_frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-# Criação da janela
-janela = tk.Tk()
+    loading_label = tk.Label(loading_frame, text="Carregando...", font=("Arial", 16), fg="white", bg="red")
+    loading_label.pack(expand=True)
 
-# Criação dos botões
-botao1 = tk.Button(janela, text='Botão 1')
-botao1.grid(row=0, column=0)
+    loading_frame.lift()
 
-botao2 = tk.Button(janela, text='Botão 2')
-botao2.grid(row=0, column=1)
+def hide_loading_frame():
+    for widget in root.winfo_children():
+        if widget.winfo_class() == "Frame":
+            widget.destroy()
 
-botao_esconder = tk.Button(janela, text='Esconder', command=esconder_botao)
-botao_esconder.grid(row=1, column=0, columnspan=2)
+root = tk.Tk()
+root.geometry("400x300")
 
-# Iniciar o loop principal do tkinter
-janela.mainloop()
+welcome_label = tk.Label(root, text="Bem-vindo à minha aplicação!", font=("Arial", 24))
+welcome_label.pack(pady=20)
+
+load_button = tk.Button(root, text="Carregar", command=show_loading_frame)
+load_button.pack()
+
+process_button = tk.Button(root, text="Processar", command=lambda: root.after(5000, hide_loading_frame))
+process_button.pack()
+
+root.mainloop()
