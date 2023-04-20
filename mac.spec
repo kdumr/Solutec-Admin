@@ -8,7 +8,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\Users\\carlos.martins\\Documents\\GitHub\\Formatador-de-Mac-V2\\icone.ico', '.'), ('C:\\Users\\carlos.martins\\Documents\\GitHub\\Formatador-de-Mac-V2\\config.json', '.'), ('C:\\Users\\carlos.martins\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\customtkinter', 'customtkinter')],
+    datas=[('C:\\Users\\carlos.martins\\Desktop\\Solutec-Admin\\icone.ico', '.'), ('C:\\Users\\carlos.martins\\Desktop\\Solutec-Admin\\config.json', '.'), ('C:\\Users\\carlos.martins\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\customtkinter', 'customtkinter')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

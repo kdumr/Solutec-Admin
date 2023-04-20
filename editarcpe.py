@@ -571,7 +571,7 @@ def editarCPE(lista, usuario, senha):
             label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
             
         def display():
-            time.sleep(2)
+            time.sleep(1)
             # Criação dos cabeçalhos da tabela
             label_cpe = Label(licenseFrameDisplay, text="CPE", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
             label_info = Label(licenseFrameDisplay, text="Info", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
@@ -629,12 +629,12 @@ def editarCPE(lista, usuario, senha):
                 label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
             destroy_loading_frame()
 
-        def teste():
+        def loadingFrame():
             global loading_frame
-            loading_frame = Frame(license_window, bg="red")
+            loading_frame = Frame(license_window, bg="gray")
             loading_frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-            loading_label = Label(loading_frame, text="Carregando...", font=("Arial", 16), fg="white", bg="black")
+            loading_label = Label(loading_frame, text="Carregando...", font=("Arial", 16), fg="white", bg="gray")
             loading_label.pack(expand=True)
 
             loading_frame.lift()
@@ -648,7 +648,7 @@ def editarCPE(lista, usuario, senha):
         def destroy_loading_frame():
             loading_frame.destroy()
 
-        botao_atualizar = Button(license_window, width=30, text="Atualizar", bg="#3498db", fg="#FFFFFF", font=("Arial", 16), command=teste)
+        botao_atualizar = Button(license_window, width=30, text="Atualizar", bg="#3498db", fg="#FFFFFF", font=("Arial", 16), command=loadingFrame)
         botao_atualizar.pack(pady=10)
 
         #start_update_thread()
