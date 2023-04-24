@@ -576,7 +576,7 @@ def editarCPE(lista, usuario, senha):
             label_cpe = Label(licenseFrameDisplay, text="CPE", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
             label_info = Label(licenseFrameDisplay, text="Info", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
             label_status = Label(licenseFrameDisplay, text="Status", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
-
+ 
             # Posicionamento dos cabeçalhos da tabela com o gerenciador de layout grid
             label_cpe.grid(row=0, column=0, padx=5, pady=5, sticky="w")
             label_info.grid(row=0, column=1, padx=5, pady=5, sticky="w")

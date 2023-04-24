@@ -1,17 +1,12 @@
-
 import tkinter as tk
 from PIL import Image, ImageTk
 from itertools import count, cycle
  
 class ImageLabel(tk.Label):
-    """
-    A Label that displays images, and plays them if they are gifs
-    :im: A PIL Image instance or a string filename
-    """
+
     def load(self, im):
         if isinstance(im, str):
             im = Image.open(im)
-            im = im.resize((100, 100), Image.LANCZOS)
         frames = []
  
         try:
@@ -40,11 +35,3 @@ class ImageLabel(tk.Label):
         if self.frames:
             self.config(image=next(self.frames))
             self.after(self.delay, self.next_frame)
- 
-#demo :
-root = tk.Tk()
-root.geometry("400x400")
-lbl = ImageLabel(root)
-lbl.pack()
-lbl.load('assets/loading.gif')
-root.mainloop()

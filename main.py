@@ -7,13 +7,13 @@ import threading
 import requests
 import customtkinter
 import json
+from loading import *
 from pynput.keyboard import Key, Listener
 from tkinter import *
 from tkinter import messagebox, filedialog, ttk
 from tkinter import messagebox
 from conection import *
 from editarcpe import *
-
 
 from api import urlLicense, urlInfoLicense, urlCreate, urlInfo, usuario, senha, endpoint
 
@@ -79,7 +79,7 @@ class Main:
                 return False
                 
             if key == Key.end:
-                # Bloquear Mouse
+                # Bloquear Mouse   
                 original_position = pyautogui.position()
                 pyautogui.FAILSAFE = False
                 pyautogui.moveTo(-100, -100)
@@ -265,30 +265,94 @@ class Main:
                     apiError(erro)
                     license_window.destroy()
                     window.deiconify()
-                    
+
             def blockLicense():
+                global loading_frameBlock
+                loading_frameBlock = Frame(license_window, bg="white")
+                loading_frameBlock.place(x=0, y=0, relwidth=1, relheight=1)
+
+                lbl = ImageLabel(loading_frameBlock, background="white")
+                lbl.pack(expand=True)
+                lbl.load('img/loading.gif')
+
+                loading_frameBlock.lift()
+                t = threading.Thread(target=blockLicenseDEF)
+                t.start()
+            def destroy_blockLicense():
+                loading_frameBlock.destroy()
+
+            def blockLicenseDEF():
                 try:
                     payloadLicense = {'ids': lista,'block': "true"}
                     response = requests.put(urlLicense, auth=(usuario, senha), json=payloadLicense)
                     saidaLicense = response.json().get("success", "Error")
                     codigo = response.status_code
-                    messagebox.showinfo("OK", "Os CPE's foram BLOQUEADOS")
                     display()
+                    destroy_blockLicense()
+                    block_frame = Frame(license_window, bg="red")
+                    block_frame.place(x=0, y=0, relwidth=1, relheight=1)
+
+                    block_label = Label(block_frame, text="Os CPE's foram BLOQUEADOS", font=("Arial", 16), fg="white", bg="red")
+                    block_label.pack(expand=True)
+                    block_frame.lift()
+                    time.sleep(2)
+                    block_frame.destroy()
+                    
                     return None
                 except Exception as erro:
                     apiError(erro)
+                    destroy_blockLicense()
+            
             def unlockLicense():
+                global loading_frameUnlock
+                loading_frameUnlock = Frame(license_window, bg="white")
+                loading_frameUnlock.place(x=0, y=0, relwidth=1, relheight=1)
+
+                lbl = ImageLabel(loading_frameUnlock, background="white")
+                lbl.pack(expand=True)
+                lbl.load('img/loading.gif')
+
+                loading_frameUnlock.lift()
+                t = threading.Thread(target=unlockLicenseDEF)
+                t.start()
+            def destroy_unlockLicense():
+                loading_frameUnlock.destroy()
+
+            def unlockLicenseDEF():
                 try:
                     payloadLicense = {'ids': lista,'block': "false"}
                     response = requests.put(urlLicense, auth=(usuario, senha), json=payloadLicense)
                     saidaLicense = response.json().get("success", "Error")
                     codigo = response.status_code
-                    messagebox.showinfo("OK", "Os CPE's foram DESBLOQUEADOS")
                     display()
+                    destroy_unlockLicense()
+                    unlock_frame = Frame(license_window, bg="green")
+                    unlock_frame.place(x=0, y=0, relwidth=1, relheight=1)
+
+                    block_label = Label(unlock_frame, text="Os CPE's foram DESBLOQUEADOS", font=("Arial", 16), fg="white", bg="green")
+                    block_label.pack(expand=True)
+                    unlock_frame.lift()
+                    time.sleep(2)
+                    unlock_frame.destroy()
                     return None
                 except Exception as erro:
+                    destroy_unlockLicense()
                     apiError(erro)
             def create():
+                global loading_frameCreate
+                loading_frameCreate = Frame(license_window, bg="white")
+                loading_frameCreate.place(x=0, y=0, relwidth=1, relheight=1)
+
+                lbl = ImageLabel(loading_frameCreate, background="white")
+                lbl.pack(expand=True)
+                lbl.load('img/loading.gif')
+
+                loading_frameCreate.lift()
+                t = threading.Thread(target=createLoading)
+                t.start()
+            def destroy_createLoading():
+                loading_frameCreate.destroy()
+            def createLoading():
                     try:
                         displayLCPE_text.delete(0.1, END)
                         for i in range(len(cpeNotFound)):
@@ -296,6 +360,15 @@ class Main:
                             response = requests.put(urlCreate, auth=(usuario, senha), json=payloadCreate)
                             response.json()
                         display()
+                        destroy_createLoading()
+                        create_frame = Frame(license_window, bg="green")
+                        create_frame.place(x=0, y=0, relwidth=1, relheight=1)
+
+                        block_label = Label(create_frame, text="Os registros dos CPE's foram criados", font=("Arial", 16), fg="white", bg="green")
+                        block_label.pack(expand=True)
+                        create_frame.lift()
+                        time.sleep(2)
+                        create_frame.destroy()
                     except Exception as erro:
                         apiError(erro)
                         return None
@@ -377,7 +450,6 @@ class Main:
                     ask = messagebox.askyesno(titulo, "Deseja criar um registro para os CPE's não encontrados?")
                     if ask:
                         create()
-                        messagebox.showinfo("OK", "Os CPE's foram criados com sucesso!")
                     else:
                         display()
 
