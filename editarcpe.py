@@ -70,11 +70,13 @@ def editarCPE(lista, usuario, senha):
         label_cpe = Label(licenseFrameDisplay, text="CPE", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
         label_info = Label(licenseFrameDisplay, text="Info", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
         label_status = Label(licenseFrameDisplay, text="Status", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
+        label_firmware = Label(licenseFrameDisplay, text="Firmware", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
 
         # Posicionamento dos cabeçalhos da tabela com o gerenciador de layout grid
         label_cpe.grid(row=0, column=0, padx=5, pady=5, sticky="w")
         label_info.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         label_status.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+        label_firmware.grid(row=0, column=3, padx=5, pady=5, sticky="w")
 
         cpeNotFound = []
 
@@ -526,6 +528,7 @@ def editarCPE(lista, usuario, senha):
         for i in range(len(lista)):
             
             responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
+            responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
 
             message = responseLicense.json().get("message")
             status = responseLicense.json().get("success")
@@ -542,20 +545,18 @@ def editarCPE(lista, usuario, senha):
                 label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
             else:
                 label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-
+                label_firmwareInfo = Label(licenseFrameDisplay, text=responseLicenseStatus.json().get("release"), foreground="#e8e8e8", background=fundoDisplay)
                 if status == True:
-                    responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
+                    
                     if responseLicenseStatus.json().get("use_tr069") == True:
                         botaoMudarDHCP.configure(state="disabled")
+                        label_firmwareInfo = Label(licenseFrameDisplay, text="TR-069", foreground="#e8e8e8", background=fundoDisplay)
 
                     label_status = Label(licenseFrameDisplay, text="Online", foreground="#00ff00", background=fundoDisplay)
-                    botaoResetarCPE.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
-                    botaoMudarDHCP.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
-                    firmwareInstalado = responseLicenseStatus.json().get("release")
-                    if firmwareInstalado != firmwareRequestsConfig and firmwareInstalado != "0086-gik":
-                        if responseLicenseStatus.json().get("use_tr069") == False:
-                            botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
-                            botaoAtualizarFirmware.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
+                    botaoResetarCPE.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
+                    botaoMudarDHCP.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
+                    botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
+                    botaoAtualizarFirmware.grid(row=i+1, column=6, padx=5, pady=5, sticky="w")
                     
                 elif status == False:
                     label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
@@ -569,6 +570,7 @@ def editarCPE(lista, usuario, senha):
             botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
             label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
             label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
+            label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
             
         def display():
             time.sleep(1)
@@ -576,14 +578,17 @@ def editarCPE(lista, usuario, senha):
             label_cpe = Label(licenseFrameDisplay, text="CPE", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
             label_info = Label(licenseFrameDisplay, text="Info", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
             label_status = Label(licenseFrameDisplay, text="Status", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
+            label_firmware = Label(licenseFrameDisplay, text="Firmware", font=("Helvetica", 12, "bold"), fg="white", bg=fundoDisplay)
  
             # Posicionamento dos cabeçalhos da tabela com o gerenciador de layout grid
             label_cpe.grid(row=0, column=0, padx=5, pady=5, sticky="w")
             label_info.grid(row=0, column=1, padx=5, pady=5, sticky="w")
             label_status.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+            label_firmware.grid(row=0, column=3, padx=5, pady=5, sticky="w")
             for i in range(len(lista)):
             
                 responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
+                responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
 
                 message = responseLicense.json().get("message")
                 status = responseLicense.json().get("success")
@@ -600,20 +605,18 @@ def editarCPE(lista, usuario, senha):
                     label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
                 else:
                     label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-
+                    label_firmwareInfo = Label(licenseFrameDisplay, text=responseLicenseStatus.json().get("release"), foreground="#e8e8e8", background=fundoDisplay)
                     if status == True:
-                        responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
+                        
                         if responseLicenseStatus.json().get("use_tr069") == True:
                             botaoMudarDHCP.configure(state="disabled")
+                            label_firmwareInfo = Label(licenseFrameDisplay, text="TR-069", foreground="#e8e8e8", background=fundoDisplay)
 
                         label_status = Label(licenseFrameDisplay, text="Online", foreground="#00ff00", background=fundoDisplay)
-                        botaoResetarCPE.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
-                        botaoMudarDHCP.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
-                        firmwareInstalado = responseLicenseStatus.json().get("release")
-                        if firmwareInstalado != firmwareRequestsConfig and firmwareInstalado != "0086-gik":
-                            if responseLicenseStatus.json().get("use_tr069") == False:
-                                botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
-                                botaoAtualizarFirmware.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
+                        botaoResetarCPE.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
+                        botaoMudarDHCP.grid(row=i+1, column=5, padx=5, pady=5, sticky="w")
+                        botaoAtualizarFirmware = customtkinter.CTkButton(licenseFrameDisplay, text="Atualizar Firmware", command=lambda i=lista[i]: atualizarFirmware(i))
+                        botaoAtualizarFirmware.grid(row=i+1, column=6, padx=5, pady=5, sticky="w")
                         
                     elif status == False:
                         label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
@@ -622,6 +625,12 @@ def editarCPE(lista, usuario, senha):
                             label_status = Label(licenseFrameDisplay, text="Não encontrado", foreground="#e8e8e8", background=fundoDisplay)
                         else:
                             label_status = Label(licenseFrameDisplay, text=f'{responseLicense.json().get("message")}', foreground="red", background=fundoDisplay)
+
+                # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
+                botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
+                label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
+                label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
+                label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
 
                 # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
                 botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
