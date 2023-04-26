@@ -529,6 +529,7 @@ def editarCPE(lista, usuario, senha):
             
             responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
             responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
+            firmwareInstalado = responseLicenseStatus.json().get("installed_release")
 
             message = responseLicense.json().get("message")
             status = responseLicense.json().get("success")
@@ -545,12 +546,14 @@ def editarCPE(lista, usuario, senha):
                 label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
             else:
                 label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-                label_firmwareInfo = Label(licenseFrameDisplay, text=responseLicenseStatus.json().get("release"), foreground="#e8e8e8", background=fundoDisplay)
+                label_firmwareInfo = Label(licenseFrameDisplay, text=firmwareInstalado, foreground="#e8e8e8", background=fundoDisplay)
+                if firmwareInstalado == None:
+                    label_firmwareInfo.config(text="Sem Firmware", foreground="red")
+                print(firmwareInstalado)
                 if status == True:
-                    
                     if responseLicenseStatus.json().get("use_tr069") == True:
                         botaoMudarDHCP.configure(state="disabled")
-                        label_firmwareInfo = Label(licenseFrameDisplay, text="TR-069", foreground="#e8e8e8", background=fundoDisplay)
+                        label_firmwareInfo.config(text="TR-069", foreground="#e8e8e8")
 
                     label_status = Label(licenseFrameDisplay, text="Online", foreground="#00ff00", background=fundoDisplay)
                     botaoResetarCPE.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
