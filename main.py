@@ -33,8 +33,8 @@ class Main:
     def main():
         window = tkinter.Tk()
         window.title(titulo)
-        window.geometry('315x330')
-        window.wm_minsize(315, 330)
+        window.geometry('350x380')
+        window.wm_minsize(350, 380)
         window.iconbitmap(icone)
         window.configure(bg='#333333')
         
@@ -139,6 +139,23 @@ class Main:
                     for item in lista:
                         display_text.insert(END, str(item) + "\n")
                     display_text.config(state="disabled")
+        def remove(event=None):
+            textInput = caixa_apagarmac.get().replace(":", "").replace("-","")
+            mac = '{}:{}:{}:{}:{}:{}'.format(textInput[:2], textInput[2:4], textInput[4:6], textInput[6:8], textInput[8:10], textInput[10:])
+            if mac in lista:
+                lista.remove(mac)
+                caixa_apagarmac.delete(0, END)
+                totalMac_label.config(text=f"MAC's registrados: {len(lista)}")
+                display_text.config(state="normal")
+                display_text.delete(1.0, END)
+                display_text.config(state="disabled")
+                for item in lista:
+                    display_text.config(state="normal")
+                    display_text.insert(END, str(item) + "\n")
+                    display_text.config(state="disabled")
+            else:
+                messagebox.showerror("Erro", "Este MAC não existe na lista!")
+                caixa_apagarmac.delete(0, END)
 
         def limparLista():
             lista.clear()
@@ -456,23 +473,43 @@ class Main:
         # Creating widgets
         titulo_label = tkinter.Label(frame, text="Solutec Admin", bg='#333333', fg="#3498db", font=("Arial", 15))
         digiteMac_label = tkinter.Label(frame, text="Digite o Mac:", bg='#333333', fg="#FFFFFF", font=("Arial", 13))
-        display_text = Text(frame, width=20, height=5, font=("Arial", 13))
+
+        frameDisplay = Frame(frame)
+        display_text = Text(frameDisplay, width=20, height=5, font=("Arial", 13))
+        display_text.pack(side=LEFT, fill=BOTH, expand=True)
+        # Cria a barra de rolagem vertical
+        scrollbar = Scrollbar(frameDisplay, orient="vertical", command=display_text.yview)
+
+        scrollbar.pack(side=RIGHT, fill=Y)
+        display_text.config(yscrollcommand=scrollbar.set)
+
         display_label = tkinter.Label(frame, text="Lista de MAC's", bg='#333333', fg="#FFFFFF", font=("Arial", 16))
         totalMac_label = tkinter.Label(frame, text=f"MAC's registrados: {len(lista)}", bg='#333333', fg="#FFFFFF", font=("Arial", 13))
+        apagarmac_label = tkinter.Label(frame, text="Apagar MAC:", bg='#333333', fg="#FFFFFF", font=("Arial", 13))
+        caixa_apagarmac = tkinter.Entry(frame, width=15, font=("Arial", 14))
+        caixa_apagarmac.bind("<Return>", remove)
         apagarLista_button = tkinter.Button(frame, text="Apagar lista", bg="#e74c3c", fg="#FFFFFF", font=("Arial", 16), command=limparLista)
         colarMac_button = tkinter.Button(frame, text="Colar MAC's", bg="#3498db", fg="#FFFFFF", font=("Arial", 16), command=colarMac)
         licenca_button = tkinter.Button(frame, text="Gerenciar CPE", bg="#3498db", fg="#FFFFFF", font=("Arial", 16), command=login)
 
         # Placing widgets on the screen
         titulo_label.grid(row=0, column=0, columnspan=2, sticky="news", pady=10)
+
         digiteMac_label.grid(row=1, column=0, sticky="we")
         caixa_mac.grid(row=1, column=1, padx=0, sticky="news")
+
         display_label.grid(row=2, column=0, columnspan=2, sticky="news")
-        display_text.grid(row=3, column=0, columnspan=2, sticky="news")
+        
+        frameDisplay.grid(row=3, column=0, columnspan=2, sticky="news")
+        
         totalMac_label.grid(row=4, column=0, columnspan=2, sticky="news")
-        apagarLista_button.grid(row=5, column=0, columnspan=2, sticky="news", pady=5)
-        colarMac_button.grid(row=6, column=0, columnspan=1, pady=1)
-        licenca_button.grid(row=6, column=1, columnspan=1, pady=1, sticky="e")
+
+        apagarmac_label.grid(row=5, column=0, sticky="we") 
+        caixa_apagarmac.grid(row=5, column=1, padx=0, pady=10, sticky="news") 
+        apagarLista_button.grid(row=6, column=0, columnspan=2, sticky="news", pady=5)
+        
+        colarMac_button.grid(row=7, column=0, columnspan=1, pady=1)
+        licenca_button.grid(row=7, column=1, columnspan=1, pady=1, sticky="e")
 
         #alterar_licenca()
         frame.pack()
