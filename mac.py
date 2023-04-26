@@ -25,8 +25,6 @@ page2 = Page2(root, switch_page_func=lambda: switch_page(page1))
 def switch_page(page):
     page.tkraise()
 
-
-
 title_label = Label(page1, text="Digite o MAC:", font=("Arial", 16), fg="#ffffff", bg=root["bg"]).pack(pady=10)
 
 text_entry = Entry(page1, width=20, font=("Arial", 14))
