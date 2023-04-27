@@ -677,3 +677,4 @@ def editarCPE(lista, usuario, senha):
         
     except Exception as erro:
         messagebox.showerror("Erro", f"Houve um erro! {erro}")
+        
