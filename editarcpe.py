@@ -10,7 +10,7 @@ import customtkinter
 import time
 import threading
 from tktooltip import ToolTip
-from main import urlConfig
+from main import urlConfig, icone
 
 fundoDisplay = "#1f2124"
 
@@ -29,6 +29,7 @@ def editarCPE(lista, usuario, senha):
         
         license_window.configure(bg='#333333')
         license_window.title(f"Editar CPE")
+        license_window.iconbitmap(icone)
 
         response = requests.get(urlConfig)
         if response.status_code == 200:
@@ -448,6 +449,9 @@ def editarCPE(lista, usuario, senha):
                     
         def resetarCPE(cpe):
             responseLicense = requests.put(f'{urlStatus}{cpe}/upstatus', auth=(usuario, senha))
+            responseLicenseInfo = requests.get(f'{urlResetarCPE}{cpe}', auth=(usuario, senha))
+            mesh_secundario = responseLicenseInfo.json().get("mesh_slaves")
+            mesh_principal = responseLicenseInfo.json().get("mesh_father")
             status = responseLicense.json().get("success")
             if status == True:
                 payloadLicense = {
@@ -472,19 +476,23 @@ def editarCPE(lista, usuario, senha):
 
             }
             }
-                responseLicenseReset = requests.put(f'{urlResetarCPE}{cpe}', auth=(usuario, senha), json=payloadLicense)
-                
-                
-                askReset = messagebox.askyesno("?", f"Deseja resetar o CPE: '{cpe}' para as configurações padrões?")
-                if askReset:
-                    try:
-                        message = responseLicenseReset.json().get("message")
-                        if message is not None:
-                            messagebox.showerror("Erro", f"{message}")
-                        else:
-                            messagebox.showinfo("OK", f"O CPE: '{cpe}' foi resetado com sucesso!")
-                    except Exception as e:
-                        messagebox.showerror("Erro!", f"Ocorreu um erro:\n {e}")
+                if mesh_secundario != []:
+                    messagebox.showerror("Erro", f"Não foi possível resetar o CPE pois o mesmo possui secundários associados.\nDesassocie os CPE's pelo Flashman para prosseguir!\nCPE's associados: {mesh_secundario}")
+                elif mesh_principal != "":
+                    messagebox.showerror("Erro", f"Não foi possível resetar o CPE pois o mesmo está associado em outro CPE.\nDesassocie os CPE's pelo Flashman para prosseguir!\nCPE's principal: {mesh_principal}")
+                            
+                else:
+                    askReset = messagebox.askyesno("?", f"Deseja resetar o CPE: '{cpe}' para as configurações padrões?")
+                    if askReset:
+                        try:
+                            responseLicenseReset = requests.put(f'{urlResetarCPE}{cpe}', auth=(usuario, senha), json=payloadLicense)
+                            message = responseLicenseReset.json().get("message")
+                            if message is not None:
+                                messagebox.showerror("Erro", f"{message}")
+                            else:
+                                messagebox.showinfo("OK", f"O CPE: '{cpe}' foi resetado com sucesso!")
+                        except Exception as e:
+                            messagebox.showerror("Erro!", f"Ocorreu um erro:\n {e}")
             else:
                 messagebox.showerror("Erro", "O CPE não está online!")
 
