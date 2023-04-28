@@ -446,7 +446,26 @@ def editarCPE(lista, usuario, senha):
                     ip_wan_data.grid(row=1, column=4)
                     ip_publico_data.grid(row=1, column=5)
                     firmware_instalado_data.grid(row=1, column=6)
-                    
+        def frameSuccessReset():
+            frameSuccess = Frame(license_window, bg="green")
+            frameSuccess.place(x=0, y=0, relwidth=1, relheight=1)
+
+            frameSuccess_label = Label(frameSuccess, text=f"O CPE foi resetado com sucesso!", font=("Arial", 16), fg="white", bg="green")
+            frameSuccess_label.pack(expand=True)
+            frameSuccess.lift()
+            time.sleep(2)
+            frameSuccess.destroy()
+
+        def frameSuccessDhcp():
+            frameSuccess = Frame(license_window, bg="green")
+            frameSuccess.place(x=0, y=0, relwidth=1, relheight=1)
+
+            frameSuccess_label = Label(frameSuccess, text=f"O CPE foi alterado para DHCP com sucesso!", font=("Arial", 16), fg="white", bg="green")
+            frameSuccess_label.pack(expand=True)
+            frameSuccess.lift()
+            time.sleep(2)
+            frameSuccess.destroy()   
+
         def resetarCPE(cpe):
             responseLicense = requests.put(f'{urlStatus}{cpe}/upstatus', auth=(usuario, senha))
             responseLicenseInfo = requests.get(f'{urlResetarCPE}{cpe}', auth=(usuario, senha))
@@ -490,12 +509,12 @@ def editarCPE(lista, usuario, senha):
                             if message is not None:
                                 messagebox.showerror("Erro", f"{message}")
                             else:
-                                messagebox.showinfo("OK", f"O CPE: '{cpe}' foi resetado com sucesso!")
+                                t = threading.Thread(target=frameSuccessReset)
+                                t.start()
                         except Exception as e:
                             messagebox.showerror("Erro!", f"Ocorreu um erro:\n {e}")
             else:
                 messagebox.showerror("Erro", "O CPE não está online!")
-
         def mudarDHCP(cpe):
             responseLicense = requests.put(f'{urlStatus}{cpe}/upstatus', auth=(usuario, senha))
             status = responseLicense.json().get("success")
@@ -513,7 +532,8 @@ def editarCPE(lista, usuario, senha):
                         elif responseLicenseDHCPStatus.json().get("connection_type") != "dhcp":
                             messagebox.showerror("Erro", f"Houve um erro e o CPE não foi alterado para dhcp")
                         else:
-                            messagebox.showinfo("OK", f"O CPE: '{cpe}' foi alterado para DHCP com sucesso!")
+                            t = threading.Thread(target=frameSuccessDhcp)
+                            t.start()
                     except Exception as e:
                         messagebox.showerror("Erro!", f"Ocorreu um erro:\n {e}")
             else:
@@ -533,10 +553,12 @@ def editarCPE(lista, usuario, senha):
                         messagebox.showinfo("OK", f"O firmware do CPE: {cpe} está sendo atualizado para: {firmwareRequestsConfig}\nNão desligue ou desconecte o CPE da rede antes do mesmo reiniciar.")  
             else:
                 messagebox.showerror("Erro", "O CPE não está online!")
+
         for i in range(len(lista)):
-            cpe = lista[i]   
+            
             responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
-            firmwareInstalado = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release")
+            responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
+
 
             message = responseLicense.json().get("message")
             status = responseLicense.json().get("success")
@@ -553,12 +575,12 @@ def editarCPE(lista, usuario, senha):
                 label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
             else:
                 label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-                label_firmwareInfo = Label(licenseFrameDisplay, text=firmwareInstalado, foreground="#e8e8e8", background=fundoDisplay)
-                if firmwareInstalado == None:
+                label_firmwareInfo = Label(licenseFrameDisplay, text=requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release"), foreground="#e8e8e8", background=fundoDisplay)
+                if requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release") == None:
                     label_firmwareInfo.config(text="Sem Firmware", foreground="red")
-                print(firmwareInstalado)
+                print(requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release"))
                 if status == True:
-                    if requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("use_tr069") == True:
+                    if responseLicenseStatus.json().get("use_tr069") == True:
                         botaoMudarDHCP.configure(state="disabled")
                         label_firmwareInfo.config(text="TR-069", foreground="#e8e8e8")
 
@@ -616,14 +638,12 @@ def editarCPE(lista, usuario, senha):
                     label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
                 else:
                     label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-                    label_firmwareInfo = Label(licenseFrameDisplay, text=firmwareInstalado, foreground="#e8e8e8", background=fundoDisplay)
-                    if firmwareInstalado == None:
-                        label_firmwareInfo.config(text="Sem Firmware", foreground="red")
-                    print(firmwareInstalado)
+                    label_firmwareInfo = Label(licenseFrameDisplay, text=requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release"), foreground="#e8e8e8", background=fundoDisplay)
                     if status == True:
+                        
                         if responseLicenseStatus.json().get("use_tr069") == True:
                             botaoMudarDHCP.configure(state="disabled")
-                            label_firmwareInfo.config(text="TR-069", foreground="#e8e8e8")
+                            label_firmwareInfo = Label(licenseFrameDisplay, text="TR-069", foreground="#e8e8e8", background=fundoDisplay)
 
                         label_status = Label(licenseFrameDisplay, text="Online", foreground="#00ff00", background=fundoDisplay)
                         botaoResetarCPE.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
@@ -639,11 +659,16 @@ def editarCPE(lista, usuario, senha):
                         else:
                             label_status = Label(licenseFrameDisplay, text=f'{responseLicense.json().get("message")}', foreground="red", background=fundoDisplay)
 
-            # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
-            botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
-            label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
-            label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
-            label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
+                # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
+                botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
+                label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
+                label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
+                label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
+
+                # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
+                botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
+                label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
+                label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
             destroy_loading_frame()
 
         def loadingFrame():
