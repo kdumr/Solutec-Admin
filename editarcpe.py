@@ -536,8 +536,7 @@ def editarCPE(lista, usuario, senha):
         for i in range(len(lista)):
             cpe = lista[i]   
             responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
-            responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
-            firmwareInstalado = responseLicenseStatus.json().get("installed_release")
+            firmwareInstalado = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("installed_release")
 
             message = responseLicense.json().get("message")
             status = responseLicense.json().get("success")
@@ -559,7 +558,7 @@ def editarCPE(lista, usuario, senha):
                     label_firmwareInfo.config(text="Sem Firmware", foreground="red")
                 print(firmwareInstalado)
                 if status == True:
-                    if responseLicenseStatus.json().get("use_tr069") == True:
+                    if requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha)).json().get("use_tr069") == True:
                         botaoMudarDHCP.configure(state="disabled")
                         label_firmwareInfo.config(text="TR-069", foreground="#e8e8e8")
 
