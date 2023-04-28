@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Solutec Admin"
-#define MyAppVersion "5.1"
+#define MyAppVersion "5."
 #define MyAppPublisher "Solutec"
 #define MyAppExeName "mac.exe"
 #define MyAppAssocName MyAppName + " File"

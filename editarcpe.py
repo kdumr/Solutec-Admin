@@ -534,7 +534,7 @@ def editarCPE(lista, usuario, senha):
             else:
                 messagebox.showerror("Erro", "O CPE não está online!")
         for i in range(len(lista)):
-            
+            cpe = lista[i]   
             responseLicense = requests.put(f'{urlStatus}{lista[i]}/upstatus', auth=(usuario, senha))
             responseLicenseStatus = requests.get(f'{urlCpeinfo}{lista[i]}', auth=(usuario, senha))
             firmwareInstalado = responseLicenseStatus.json().get("installed_release")
@@ -604,6 +604,7 @@ def editarCPE(lista, usuario, senha):
                 message = responseLicense.json().get("message")
                 status = responseLicense.json().get("success")
 
+                
                 botao = customtkinter.CTkButton(licenseFrameDisplay, text=lista[i], command=lambda i=lista[i]: cpe_click(i))
                 botaoResetarCPE = customtkinter.CTkButton(licenseFrameDisplay, text="Resetar CPE", command=lambda i=lista[i]: resetarCPE(i))
                 botaoMudarDHCP = customtkinter.CTkButton(licenseFrameDisplay, text="Mudar para DHCP", command=lambda i=lista[i]: mudarDHCP(i))
@@ -616,12 +617,14 @@ def editarCPE(lista, usuario, senha):
                     label_status = Label(licenseFrameDisplay, text="Offline", foreground="#e8e8e8", background=fundoDisplay)
                 else:
                     label_info = Label(licenseFrameDisplay, text="CPE Encontrado", foreground="green", background=fundoDisplay)
-                    label_firmwareInfo = Label(licenseFrameDisplay, text=responseLicenseStatus.json().get("release"), foreground="#e8e8e8", background=fundoDisplay)
+                    label_firmwareInfo = Label(licenseFrameDisplay, text=firmwareInstalado, foreground="#e8e8e8", background=fundoDisplay)
+                    if firmwareInstalado == None:
+                        label_firmwareInfo.config(text="Sem Firmware", foreground="red")
+                    print(firmwareInstalado)
                     if status == True:
-                        
                         if responseLicenseStatus.json().get("use_tr069") == True:
                             botaoMudarDHCP.configure(state="disabled")
-                            label_firmwareInfo = Label(licenseFrameDisplay, text="TR-069", foreground="#e8e8e8", background=fundoDisplay)
+                            label_firmwareInfo.config(text="TR-069", foreground="#e8e8e8")
 
                         label_status = Label(licenseFrameDisplay, text="Online", foreground="#00ff00", background=fundoDisplay)
                         botaoResetarCPE.grid(row=i+1, column=4, padx=5, pady=5, sticky="w")
@@ -637,16 +640,11 @@ def editarCPE(lista, usuario, senha):
                         else:
                             label_status = Label(licenseFrameDisplay, text=f'{responseLicense.json().get("message")}', foreground="red", background=fundoDisplay)
 
-                # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
-                botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
-                label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
-                label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
-                label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
-
-                # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
-                botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
-                label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
-                label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
+            # Posicionamento dos labels das linhas da tabela com o gerenciador de layout grid
+            botao.grid(row=i+1, column=0, padx=5, pady=5, sticky="w")
+            label_info.grid(row=i+1, column=1, padx=5, pady=5, sticky="w")
+            label_status.grid(row=i+1, column=2, padx=5, pady=5, sticky="w")
+            label_firmwareInfo.grid(row=i+1, column=3, padx=5, pady=5, sticky="w")
             destroy_loading_frame()
 
         def loadingFrame():
@@ -677,4 +675,4 @@ def editarCPE(lista, usuario, senha):
         
     except Exception as erro:
         messagebox.showerror("Erro", f"Houve um erro! {erro}")
-        
+
