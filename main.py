@@ -17,7 +17,8 @@ from editarcpe import *
 
 from api import urlLicense, urlInfoLicense, urlCreate, urlInfo, usuario, senha, endpoint
 
-
+usuario = "carlos.martins"
+senha = "ced251002"
 with open('config.json', 'r') as arquivo:
     config = json.load(arquivo)
 version = config['version']
@@ -227,7 +228,10 @@ class Main:
                 senha_entry = Entry(loginFrame, width=20, show="*", font=("Arial", 13))
                 senha_entry.grid(row=3, column=1, sticky="w", pady=10)
 
+                def enter(event):
+                    logar(username_entry.get(), senha_entry.get())
 
+                senha_entry.bind("<Return>", enter)
                 botao_entrar = Button(loginFrame, text="LOGAR", bg="#3498db", fg="#FFFFFF", font=("Arial", 16), command=lambda: logar(username_entry.get(), senha_entry.get()))
                 botao_entrar.grid(row=4, column=0, columnspan=2)
             else:
