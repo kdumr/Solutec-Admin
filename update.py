@@ -18,7 +18,7 @@ class DownloaderApp:
         # Definir o tamanho inicial da janela
         self.set_window_size(400, self.default_window_height)
 
-        self.url = "https://raw.githubusercontent.com/kdumr/Solutec-Admin-v2/main/solutecadmsetup.exe"
+        self.url = "https://raw.githubusercontent.com/kdumr/Solutec-Admin/main/solutecadmsetup.exe"
         self.save_path = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Temp", "setup.exe")
         
         # Criar janela

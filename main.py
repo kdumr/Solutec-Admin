@@ -25,7 +25,7 @@ keyboard_listenerCancel = None
 
 def versionCheck():
         # Faz uma requisição para verificar se a versão do aplicativo é a versão mais recente
-        rawUrlVersion = 'https://raw.githubusercontent.com/kdumr/Solutec-Admin-v2/main/config.json'
+        rawUrlVersion = 'https://raw.githubusercontent.com/kdumr/Solutec-Admin/main/config.json'
         print("Verificando versão...")
         try:
             response = requests.get(rawUrlVersion)
