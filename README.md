@@ -1,9 +1,7 @@
-# Solutec Admin v2
+# Solutec Admin
 
+<img src="https://raw.githubusercontent.com/kdumr/Solutec-Admin/main/assets/img/logo.png" alt="Logo Solutec Admin" min-width="400px" max-width="400px" width="400px" >
 
-<img src="https://raw.githubusercontent.com/kdumr/Solutec-Admin-v2/main/assets/img/logo.png" alt="Logo Solutec Admin" min-width="400px" max-width="400px" width="400px" >
-
-> Versão 2 do painel "Solutec Admin" destinado a profissionais que gerenciam diretamente CPEs.
 
 ### Ajustes e melhorias
 
